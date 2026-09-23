@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zerei Todos Games</title>
+    <!-- Font Awesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Ficheiro de Estilos Personalizado -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navegação Superior -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo" onclick="switchView('catalog')">
+                <i class="fa-solid fa-gamepad logo-icon"></i>
+                <span class="logo-text">Zerei<span class="highlight"> Todos</span> <span class="logo-text"> Games</span></span>
+            </div>
+
+            <nav class="nav-links">
+                <button class="nav-btn active" id="nav-catalog" onclick="switchView('catalog')">
+                    <i class="fa-solid fa-compass"></i> Catálogo
+                </button>
+                <button class="nav-btn" id="nav-profile" onclick="switchView('profile')">
+                    <i class="fa-solid fa-user"></i> Perfil
+                </button>
+                <button class="nav-btn" id="nav-admin" onclick="switchView('admin')">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Administração
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+
+        <section id="catalog-view" class="view-section active">
+            <div class="catalog-header">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Pesquisar por título ou desenvolvedora..." oninput="handleSearch()">
+                </div>
+                <div class="filter-box">
+                    <label for="sort-select"><i class="fa-solid fa-arrow-down-wide-short"></i> Ordenar:</label>
+                    <select id="sort-select" onchange="handleSort()">
+                        <option value="rating-desc">Melhor Classificados</option>
+                        <option value="year-desc">Mais Recentes</option>
+                        <option value="year-asc">Mais Antigos</option>
+                        <option value="title-asc">Nome (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="games-grid" class="games-grid">
+                <!-- Jogos inseridos via JavaScript -->
+            </div>
+        </section>
+
+        <!-- 2. VISTA DO PERFIL -->
+        <section id="profile-view" class="view-section">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <div class="profile-info">
+                    <h2>Jogador 1</h2>
+                    <p class="profile-tag">Crítico de Jogos • Membro desde 2026</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-star stat-icon"></i>
+                    <div class="stat-data">
+                        <span id="stat-total-reviews" class="stat-value">0</span>
+                        <span class="stat-label">Jogos Avaliados</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-chart-line stat-icon"></i>
+                    <div class="stat-data">
+                        <span id="stat-avg-rating" class="stat-value">0.0</span>
+                        <span class="stat-label">Nota Média Dada</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> As Tuas Análises Recentes</h3>
+            <div id="user-reviews-list" class="reviews-list">
+                <!-- Análises do utilizador inseridas via JS -->
+            </div>
+        </section>
+
+        <!-- 3. VISTA DE ADMINISTRAÇÃO -->
+        <section id="admin-view" class="view-section">
+            <div class="admin-grid">
+                <!-- Formulário de Registo/Edição -->
+                <div class="admin-card">
+                    <h3 id="form-title" class="card-title"><i class="fa-solid fa-plus-circle"></i> Adicionar Novo Jogo</h3>
+                    <form id="game-form" onsubmit="handleGameFormSubmit(event)">
+                        <input type="hidden" id="game-id">
+                        
+                        <div class="form-group">
+                            <label for="game-title">Título do Jogo</label>
+                            <input type="text" id="game-title" required placeholder="Ex: Elden Ring">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="game-developer">Desenvolvedora</label>
+                                <input type="text" id="game-developer" required placeholder="Ex: FromSoftware">
+                            </div>
+                            <div class="form-group">
+                                <label for="game-year">Ano de Lançamento</label>
+                                <input type="number" id="game-year" required min="1950" max="2030" placeholder="Ex: 2022">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="game-cover">URL da Capa (Imagem)</label>
+                            <input type="text" id="game-cover" required placeholder="https://exemplo.com/imagem.jpg">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="game-synopsis">Sinopse / Descrição</label>
+                            <textarea id="game-synopsis" rows="4" required placeholder="Escreve um breve resumo do jogo..."></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" id="cancel-edit-btn" class="btn btn-secondary hidden" onclick="resetGameForm()">Cancelar</button>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Guardar Jogo</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de Gestão de Jogos -->
+                <div class="admin-card">
+                    <h3 class="card-title"><i class="fa-solid fa-list-check"></i> Jogos Registados</h3>
+                    <div class="table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Capa</th>
+                                    <th>Título</th>
+                                    <th>Ano</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-games-tbody">
+                                <!-- Linhas inseridas via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE DETALHES E AVALIAÇÃO DO JOGO -->
+    <div id="game-modal" class="modal-overlay hidden" onclick="closeGameModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeGameModal()">&times;</button>
+            
+            <div id="modal-body" class="modal-body">
+                <!-- Conteúdo dinâmico do jogo -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO DE ELIMINAÇÃO -->
+    <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <h3>Confirmar Ação</h3>
+            <p id="confirm-message">Tens a certeza de que desejas eliminar este jogo?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeConfirmModal(false)">Cancelar</button>
+                <button class="btn btn-danger" onclick="closeConfirmModal(true)">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES TOAST -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
